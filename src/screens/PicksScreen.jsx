@@ -316,7 +316,12 @@ export default function PicksScreen() {
         </div>
       ) : (
         <div className="analysis-content">
-          {p.analisis?.map((block, i) => (
+          {p.analysis && (
+  <div className="analysis-block">
+    <RenderAnalysis text={p.analysis} />
+  </div>
+)}
+{!p.analysis && p.analisis?.map((block, i) => (
             <div key={i} className="analysis-block">
               <div className="analysis-block-title">{block.t}</div>
               <RenderAnalysis text={block.txt} />
