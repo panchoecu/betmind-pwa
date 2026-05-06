@@ -71,6 +71,13 @@ export const translations = {
     noHighOddsSub: 'El modelo no encontró picks de alto valor para hoy.',
     monthlyHistory: 'HISTORIAL MENSUAL',
     resultsAfter: 'Los resultados aparecen después de verificación nocturna',
+    premiumHero: 'Accede a todos los picks y análisis completos de 7 agentes IA',
+    whatsIncluded: '¿Qué incluye Premium?',
+    guaranteeTitle: 'Winrate verificado 88.3%',
+    guaranteeSub: 'Resultados reales · Sin picks inventados · Track record público',
+    mostPopular: '⭐ MÁS POPULAR',
+    choosePlan: '⚡ ELEGIR PLAN',
+    selectPlan: 'Seleccionar',
   },
   en: {
     home: 'HOME',
@@ -144,6 +151,13 @@ export const translations = {
     noHighOddsSub: 'The model found no high value picks today.',
     monthlyHistory: 'MONTHLY HISTORY',
     resultsAfter: 'Results appear after nightly verification',
+    premiumHero: 'Access all picks and complete AI analysis from 7 agents',
+    whatsIncluded: "What's included in Premium?",
+    guaranteeTitle: 'Verified winrate 88.3%',
+    guaranteeSub: 'Real results · No fake picks · Public track record',
+    mostPopular: '⭐ MOST POPULAR',
+    choosePlan: '⚡ CHOOSE PLAN',
+    selectPlan: 'Select',
   }
 }
 

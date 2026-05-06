@@ -97,7 +97,7 @@ export default function PremiumScreen() {
         <div className="premium-hero-icon">👑</div>
         <div className="premium-hero-title">BetMind Premium</div>
         <div className="premium-hero-sub">
-          Accede a todos los picks y análisis completos de 7 agentes IA
+          {t.premiumHero}
         </div>
       </div>
 
@@ -110,7 +110,7 @@ export default function PremiumScreen() {
             onClick={() => handleBuy(plan.variantId)}
           >
             {plan.popular && (
-              <div className="plan-popular-badge">⭐ MÁS POPULAR</div>
+              <div className="plan-popular-badge">{t.mostPopular}</div>
             )}
             <div className="plan-header">
               <div className="plan-name">{plan.name}</div>
@@ -123,14 +123,14 @@ export default function PremiumScreen() {
               <span className="plan-period">{plan.period}</span>
             </div>
             <div className="plan-cta">
-              {plan.popular ? '⚡ ELEGIR PLAN' : 'Seleccionar'}
+              {plan.popular ? '{t.choosePlan}' : '{t.selectPlan}'}
             </div>
           </div>
         ))}
       </div>
 
       {/* FEATURES */}
-      <div className="features-title">¿Qué incluye Premium?</div>
+      <div className="features-title">{t.whatsIncluded}</div>
       <div className="features-list">
         {FEATURES.map((f, i) => (
           <div key={i} className="feature-item">
@@ -147,9 +147,9 @@ export default function PremiumScreen() {
       <div className="guarantee-box">
         <div className="guarantee-icon">🛡️</div>
         <div className="guarantee-text">
-          <div className="guarantee-title">Winrate verificado 88.3%</div>
+          <div className="guarantee-title">{t.guaranteeTitle}</div>
           <div className="guarantee-sub">
-            Resultados reales · Sin picks inventados · Track record público
+            {t.guaranteeSub}
           </div>
         </div>
       </div>
