@@ -1,11 +1,12 @@
+import { useNavigate } from 'react-router-dom'
 import useStore from '../store/useStore'
 import { translations } from '../i18n/translations'
 import AppHeader from '../components/AppHeader'
 
-const PLANS = [
+const getPlans = (t) => [
   {
     id: 'monthly',
-    name: 'MENSUAL',
+    name: t.planMonthly,
     price: '$19',
     period: '/mes',
     variantId: '1481453',
@@ -14,36 +15,40 @@ const PLANS = [
   },
   {
     id: 'quarterly',
-    name: 'TRIMESTRAL',
+    name: t.planQuarterly,
     price: '$49',
     period: '/3m',
     variantId: '1481454',
     popular: true,
-    savings: 'Ahorra 14%',
+    savings: t.save14,
   },
   {
     id: 'annual',
-    name: 'ANUAL',
+    name: t.planAnnual,
     price: '$149',
     period: '/año',
     variantId: '1481455',
     popular: false,
-    savings: 'Ahorra 35%',
+    savings: t.save35,
   },
 ]
 
-const FEATURES = [
-  { icon: '📅', title: 'Picks diarios completos', sub: '5+ picks con análisis por jornada' },
-  { icon: '⚡', title: 'Análisis on-demand', sub: '15 análisis por día con pipeline IA' },
-  { icon: '📋', title: 'Análisis completo', sub: 'Forma · H2H · Poisson · 7 Agentes' },
-  { icon: '🏥', title: 'Lesiones en tiempo real', sub: 'Bajas confirmadas antes del partido' },
-  { icon: '📊', title: 'Track record verificado', sub: 'Historial completo con resultados reales' },
-  { icon: '🔔', title: 'Notificaciones push', sub: 'Picks listos a las 21:45 EC' },
+const getFeatures = (t) => [
+  { icon: '📅', title: t.feat1Title, sub: t.feat1Sub },
+  { icon: '⚡', title: t.feat2Title, sub: t.feat2Sub },
+  { icon: '📋', title: t.feat3Title, sub: t.feat3Sub },
+  { icon: '🏥', title: t.feat4Title, sub: t.feat4Sub },
+  { icon: '📊', title: t.feat5Title, sub: t.feat5Sub },
+  { icon: '🔔', title: t.feat6Title, sub: t.feat6Sub },
 ]
 
 export default function PremiumScreen() {
   const { isPremium, premiumUntil, chatId, lang } = useStore()
   const t = translations[lang]
+  const navigate = useNavigate()
+
+  const PLANS = getPlans(t)
+  const FEATURES = getFeatures(t)
 
   const handleBuy = (variantId) => {
     const base = `https://betmindai.com/checkout?variant=${variantId}`
@@ -51,12 +56,10 @@ export default function PremiumScreen() {
     window.open(url, '_blank')
   }
 
-  // ACTIVE PREMIUM VIEW
   if (isPremium) return (
     <div className="screen">
       <AppHeader />
       <div className="screen-title">{t.myAccount}</div>
-
       <div className="premium-active-card">
         <div className="premium-active-crown">👑</div>
         <div className="premium-active-title">{t.premiumActive}</div>
@@ -70,7 +73,6 @@ export default function PremiumScreen() {
           </div>
         )}
       </div>
-
       <div className="features-list">
         {FEATURES.map((f, i) => (
           <div key={i} className="feature-item">
@@ -83,25 +85,19 @@ export default function PremiumScreen() {
           </div>
         ))}
       </div>
-
       <div style={{ height: 20 }} />
     </div>
   )
 
-  // UPGRADE VIEW
   return (
     <div className="screen">
       <AppHeader />
-
       <div className="premium-hero">
         <div className="premium-hero-icon">👑</div>
         <div className="premium-hero-title">BetMind Premium</div>
-        <div className="premium-hero-sub">
-          {t.premiumHero}
-        </div>
+        <div className="premium-hero-sub">{t.premiumHero}</div>
       </div>
 
-      {/* PLANS */}
       <div className="plans-list">
         {PLANS.map((plan) => (
           <div
@@ -123,13 +119,12 @@ export default function PremiumScreen() {
               <span className="plan-period">{plan.period}</span>
             </div>
             <div className="plan-cta">
-              {plan.popular ? '{t.choosePlan}' : '{t.selectPlan}'}
+              {plan.popular ? t.choosePlan : t.selectPlan}
             </div>
           </div>
         ))}
       </div>
 
-      {/* FEATURES */}
       <div className="features-title">{t.whatsIncluded}</div>
       <div className="features-list">
         {FEATURES.map((f, i) => (
@@ -143,14 +138,11 @@ export default function PremiumScreen() {
         ))}
       </div>
 
-      {/* GUARANTEE */}
       <div className="guarantee-box">
         <div className="guarantee-icon">🛡️</div>
         <div className="guarantee-text">
           <div className="guarantee-title">{t.guaranteeTitle}</div>
-          <div className="guarantee-sub">
-            {t.guaranteeSub}
-          </div>
+          <div className="guarantee-sub">{t.guaranteeSub}</div>
         </div>
       </div>
 
