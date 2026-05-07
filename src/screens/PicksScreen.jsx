@@ -68,10 +68,10 @@ export default function PicksScreen() {
   if (view === 'list') return (
     <div className="screen">
       <AppHeader />
-      <div className="screen-title">PICKS DEL DÍA</div>
+      <div className="screen-title">{lang === 'en' ? 'PICKS OF THE DAY' : 'PICKS DEL DÍA'}</div>
 
       <div className="picks-count-bar">
-        <span className="picks-count-label">PRINCIPALES</span>
+        <span className="picks-count-label">{lang === 'en' ? 'MAIN PICKS' : 'PRINCIPALES'}</span>
         <span className="picks-count-num">· {mainPicks.length}</span>
       </div>
 
@@ -137,9 +137,9 @@ export default function PicksScreen() {
 
       {!isPremium && (
         <div className="picks-free-note">
-          2 de {mainPicks.length} picks desbloqueados ·{' '}
+          {lang === 'en' ? `2 of ${mainPicks.length} picks unlocked · ` : `2 de ${mainPicks.length} picks desbloqueados · `}
           <span className="link" onClick={() => navigate('/premium')}>
-            Activa Premium →
+            {lang === 'en' ? 'Activate Premium →' : 'Activa Premium →'}
           </span>
         </div>
       )}
