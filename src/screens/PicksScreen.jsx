@@ -267,14 +267,7 @@ function EnStatsView({ p }) {
           <strong>{po.p_under25 ?? p.p_under25 ?? '—'}%</strong>
         </div>
       </div>
-      {p.factores_clave?.length > 0 && (
-        <div className="key-factors">
-          <div className="analysis-section-title">🔑 Key Factors</div>
-          {p.factores_clave.map((f, i) => (
-            <div key={i} className="factor-item">{f}</div>
-          ))}
-        </div>
-      )}
+      
     </div>
   )
 }
@@ -558,7 +551,7 @@ export default function PicksScreen() {
           <AIEdgeBadge ev={p.ev} conf={p.conf} />
 
           {/* KEY FACTORS (EN) */}
-          {lang === 'en' && <EnStatsView p={p} />}
+          {lang === 'en' && <EnStatsView p={p} showFactors={false} />}
 
           {/* ANÁLISIS COMPLETO CTA (ES) */}
           {lang === 'es' && (

@@ -63,7 +63,7 @@ export default function StatsScreen() {
       {/* ── HERO CARD ─────────────────────────────────────── */}
       <div className="stats-month-card">
         <div className="stats-verified-badge">
-          ✅ {s.mes} — {t.verified}
+          ✅ {s.mes} — {lang === 'es' ? 'Verificado' : 'Verified'}
         </div>
 
         {/* BIG NUMBERS ROW */}
