@@ -51,14 +51,7 @@ function EnStatsView({ p }) {
         <div className="stat-en"><span>Over 2.5</span><strong>{p.poisson?.p_over25 ?? p.p_over25 ?? '—'}%</strong></div>
         <div className="stat-en"><span>Under 2.5</span><strong>{p.poisson?.p_under25 ?? p.p_under25 ?? '—'}%</strong></div>
       </div>
-      {p.factores_clave?.length > 0 && (
-        <div className="key-factors">
-          <div className="analysis-section-title">🔑 Key Factors</div>
-          {p.factores_clave.map((f, i) => (
-            <div key={i} className="factor-item">• {f}</div>
-          ))}
-        </div>
-      )}
+      {lang === 'en' && null}
     </div>
   )
 }
