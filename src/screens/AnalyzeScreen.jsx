@@ -65,7 +65,7 @@ export default function AnalyzeScreen() {
     if (!canAnalyze) return
     setLoading(true)
     setResult(null)
-    const data = await analyzeMatch(input)
+    const data = await analyzeMatch(input, lang)
     setLoading(false)
     setResult(data)
     if (!data.error && remaining !== null) {

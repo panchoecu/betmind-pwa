@@ -42,7 +42,7 @@ export const fetchHistory = async () => {
   } catch { return [] }
 }
 
-export const analyzeMatch = async (input) => {
+export const analyzeMatch = async (input, lang = 'es') => {
   try {
     const parts = input.split(' vs ')
     if (parts.length < 2) throw new Error('Formato inválido')
@@ -54,7 +54,8 @@ export const analyzeMatch = async (input) => {
         away_team: parts[1].trim(),
         league: 'Auto',
         match_date: new Date().toISOString().split('T')[0],
-        odds: { home: 0, draw: 0, away: 0 }
+        odds: { home: 0, draw: 0, away: 0 },
+        lang: lang
       })
     })
     if (!r.ok) throw new Error('API error')
