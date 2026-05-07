@@ -7,6 +7,7 @@ import AppHeader from '../components/AppHeader'
 import ConfBar from '../components/ConfBar'
 import AIEdgeBadge from '../components/AIEdgeBadge'
 
+/* ─── GPT ANALYSIS RENDERER ─────────────────────────────── */
 function RenderAnalysis({ text }) {
   if (!text) return null
   const lines = text.split('\n').filter(l => l.trim())
@@ -15,7 +16,7 @@ function RenderAnalysis({ text }) {
   for (const line of lines) {
     const clean = line.replace(/[*_]/g, '').trim()
     if (!clean) continue
-    if (clean.match(/^(🏠|✈️|📋|🔑|📅|⚽|📊|⚠️)/)) {
+    if (clean.match(/^(🏠|✈️|📋|🔑|📅|⚽|📊|⚠️|🔥|💡|📈|🧠|⚖️)/)) {
       if (current) sections.push(current)
       current = { title: clean, text: '' }
     } else if (current) {
@@ -30,22 +31,119 @@ function RenderAnalysis({ text }) {
       {sections.map((s, i) => (
         <div key={i} className="analysis-section">
           {s.title && <div className="analysis-section-title">{s.title}</div>}
-          <div className="analysis-section-text">{s.text}</div>
+          {s.text  && <div className="analysis-section-text">{s.text}</div>}
         </div>
       ))}
     </div>
   )
 }
 
+/* ─── AGENT STEPS LOADER ────────────────────────────────── */
+function AgentLoader({ step, t }) {
+  return (
+    <div style={{
+      margin: '0 18px',
+      background: 'var(--bg-card)',
+      border: '1px solid var(--bg-3)',
+      borderRadius: 'var(--r-lg)',
+      padding: '28px 20px',
+    }}>
+      {/* Spinner + título */}
+      <div style={{ textAlign: 'center', marginBottom: 24 }}>
+        <div className="loading-spinner" style={{ margin: '0 auto 16px' }} />
+        <div style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 20,
+          letterSpacing: 2,
+          color: 'var(--t1)',
+          marginBottom: 4,
+        }}>
+          {t.processing}
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--t3)' }}>{t.processingTime}</div>
+      </div>
+
+      {/* Steps */}
+      <div style={{
+        background: 'var(--bg-2)',
+        borderRadius: 'var(--r-md)',
+        border: '1px solid var(--bg-3)',
+        padding: '12px 14px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
+      }}>
+        {AGENT_STEPS.map((s, i) => {
+          const isDone   = i < step
+          const isActive = i === step
+          return (
+            <div key={i} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              fontSize: 12,
+              color: isDone ? 'var(--green)' : isActive ? 'var(--t1)' : 'var(--t4)',
+              transition: 'color 0.3s',
+            }}>
+              <span style={{
+                width: 20,
+                height: 20,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 10,
+                fontWeight: 700,
+                flexShrink: 0,
+                background: isDone
+                  ? 'rgba(74,222,128,0.15)'
+                  : isActive
+                    ? 'rgba(192,20,42,0.15)'
+                    : 'var(--bg-3)',
+                border: `1px solid ${isDone ? 'rgba(74,222,128,0.4)' : isActive ? 'rgba(192,20,42,0.4)' : 'var(--bg-4)'}`,
+                color: isDone ? 'var(--green)' : isActive ? 'var(--crimson)' : 'var(--t4)',
+              }}>
+                {isDone ? '✓' : i + 1}
+              </span>
+              <span style={{ flex: 1, lineHeight: 1.4 }}>{s}</span>
+              {isActive && (
+                <span style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: 'var(--crimson)',
+                  boxShadow: '0 0 6px var(--crimson)',
+                  animation: 'pulse 1s infinite',
+                  flexShrink: 0,
+                }} />
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN COMPONENT
+═══════════════════════════════════════════════════════════ */
 export default function AnalyzeScreen() {
   const navigate = useNavigate()
   const { isPremium, remaining, setRemaining, lang } = useStore()
   const t = translations[lang]
 
-  const [input, setInput] = useState('')
+  const [input,   setInput]   = useState('')
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState(null)
-  const [step, setStep] = useState(0)
+  const [result,  setResult]  = useState(null)
+  const [step,    setStep]    = useState(0)
 
   const canAnalyze = input.includes(' vs ') && !loading &&
     (remaining === null || remaining > 0)
@@ -73,6 +171,8 @@ export default function AnalyzeScreen() {
     }
   }
 
+  const remainingCount = remaining ?? (isPremium ? 15 : 1)
+
   return (
     <div className="screen">
       <AppHeader />
@@ -81,12 +181,13 @@ export default function AnalyzeScreen() {
       {/* REMAINING BADGE */}
       <div className="analyze-remaining-bar">
         <span className="analyze-remaining-dot" />
-        <span className="analyze-remaining-text">
-          {remaining ?? (isPremium ? 15 : 1)} {t.analyzeRemaining}
+        <span>
+          <strong style={{ color: 'var(--green)' }}>{remainingCount}</strong>
+          {' '}{t.analyzeRemaining}
         </span>
       </div>
 
-      {/* INPUT FORM */}
+      {/* INPUT */}
       <div className="analyze-form">
         <div className="analyze-input-wrap">
           <span className="analyze-input-icon">⚽</span>
@@ -101,7 +202,9 @@ export default function AnalyzeScreen() {
             <button
               className="analyze-clear"
               onClick={() => { setInput(''); setResult(null) }}
-            >×</button>
+            >
+              ×
+            </button>
           )}
         </div>
 
@@ -109,6 +212,10 @@ export default function AnalyzeScreen() {
           className={`btn-primary analyze-btn ${!canAnalyze ? 'disabled' : ''}`}
           onClick={handleAnalyze}
           disabled={!canAnalyze}
+          style={{
+            background: canAnalyze ? 'var(--crimson)' : 'var(--bg-3)',
+            color: canAnalyze ? '#fff' : 'var(--t4)',
+          }}
         >
           {loading ? t.analyzing : t.analyzeBtn}
         </button>
@@ -116,46 +223,55 @@ export default function AnalyzeScreen() {
         <div className="analyze-hint">{t.analyzeHint}</div>
       </div>
 
-      {/* NOT PREMIUM */}
+      {/* FREE USER NOTE */}
       {!isPremium && (
-        <div className="analyze-free-note">
-          <span>🔒 Free: 1 análisis/día · </span>
-          <span className="link" onClick={() => navigate('/premium')}>
-            Premium: 15/día →
+        <div style={{
+          margin: '-4px 18px 16px',
+          padding: '12px 14px',
+          background: 'rgba(192,20,42,0.06)',
+          border: '1px solid rgba(192,20,42,0.18)',
+          borderRadius: 'var(--r-md)',
+          fontSize: 12,
+          color: 'var(--t3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+        }}>
+          <span>🔒 {lang === 'es' ? 'Free: 1 análisis/día' : 'Free: 1 analysis/day'}</span>
+          <span
+            className="link"
+            style={{ whiteSpace: 'nowrap' }}
+            onClick={() => navigate('/premium')}
+          >
+            Premium: 15/{lang === 'es' ? 'día' : 'day'} →
           </span>
         </div>
       )}
 
-      {/* LOADING */}
-      {loading && (
-        <div className="loading-card">
-          <div className="loading-spinner" />
-          <div className="loading-title">{t.processing}</div>
-          <div className="loading-sub">{t.processingTime}</div>
-          <div className="agent-steps">
-            {AGENT_STEPS.map((s, i) => (
-              <div
-                key={i}
-                className={`agent-step ${i < step ? 'done' : i === step ? 'active' : ''}`}
-              >
-                <span className="agent-step-icon">
-                  {i < step ? '✓' : i === step ? '▶' : '·'}
-                </span>
-                <span className="agent-step-text">{s}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* LOADING — AGENT STEPS */}
+      {loading && <AgentLoader step={step} t={t} />}
 
       {/* RESULT */}
       {result && !loading && !result.error && (
-        <div className="result-card">
-          <div className="result-match-header">
-            {result.home_team || result.home} vs {result.away_team || result.away}
+        <div style={{ margin: '0 18px' }}>
+
+          {/* MATCH TITLE */}
+          <div style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 24,
+            letterSpacing: 1.5,
+            color: 'var(--t1)',
+            marginBottom: 12,
+            lineHeight: 1.1,
+          }}>
+            {result.home_team || result.home}
+            <span style={{ color: 'var(--t4)', fontSize: 14, margin: '0 8px' }}>vs</span>
+            {result.away_team || result.away}
           </div>
 
-          <div className="data-box" style={{ borderRadius: 0, border: 'none', borderTop: '1px solid var(--bg-3)', margin: 0 }}>
+          {/* DATA BOX */}
+          <div className="data-box" style={{ marginLeft: 0, marginRight: 0, marginBottom: 12 }}>
             <div className="data-row">
               <span className="data-label">{t.mainPick}</span>
               <span className="data-value" style={{ color: '#E8203A' }}>
@@ -164,7 +280,13 @@ export default function AnalyzeScreen() {
             </div>
             <div className="data-row">
               <span className="data-label">{t.odds}</span>
-              <span className="data-value">@{result.odd}</span>
+              <span className="data-value" style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 22,
+                color: 'var(--gold)',
+              }}>
+                @{result.odd}
+              </span>
             </div>
             <div className="data-row">
               <span className="data-label">{t.confidence}</span>
@@ -186,35 +308,78 @@ export default function AnalyzeScreen() {
             </div>
           </div>
 
-          <div style={{ padding: '14px 18px' }}>
+          {/* AI EDGE */}
+          <div style={{ marginBottom: 12 }}>
             <AIEdgeBadge ev={result.ev} conf={result.confianza} />
           </div>
 
+          {/* ANÁLISIS COMPLETO (Premium) */}
           {isPremium && result.analisis ? (
-            <div className="result-analysis">
+            <div style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--bg-3)',
+              borderRadius: 'var(--r-md)',
+              padding: '16px',
+              marginBottom: 12,
+            }}>
+              <div style={{
+                fontSize: 10,
+                letterSpacing: 2,
+                color: 'var(--crimson)',
+                fontWeight: 700,
+                marginBottom: 14,
+                paddingBottom: 8,
+                borderBottom: '1px solid var(--bg-3)',
+                textTransform: 'uppercase',
+              }}>
+                🧠 {lang === 'es' ? 'ANÁLISIS COMPLETO — 7 AGENTES IA' : 'FULL ANALYSIS — 7 AI AGENTS'}
+              </div>
               <RenderAnalysis text={result.analisis} />
             </div>
           ) : !isPremium && (
-            <div className="result-locked-note">
-              🔒 Análisis completo disponible con Premium{' '}
-              <span className="link" onClick={() => navigate('/premium')}>
-                Ver planes →
-              </span>
+            <div style={{
+              background: 'rgba(192,20,42,0.06)',
+              border: '1px solid rgba(192,20,42,0.2)',
+              borderRadius: 'var(--r-md)',
+              padding: '16px',
+              textAlign: 'center',
+              marginBottom: 12,
+            }}>
+              <div style={{ fontSize: 28, marginBottom: 8 }}>🔒</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--t1)', marginBottom: 4 }}>
+                {lang === 'es' ? 'Análisis completo bloqueado' : 'Full analysis locked'}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--t3)', marginBottom: 14, lineHeight: 1.6 }}>
+                {lang === 'es'
+                  ? 'El análisis narrativo de 7 agentes IA está disponible en Premium'
+                  : '7 AI agent narrative analysis available in Premium'}
+              </div>
+              <button className="btn-primary" onClick={() => navigate('/premium')}>
+                {t.activatePremium}
+              </button>
             </div>
           )}
         </div>
       )}
 
       {/* ERROR */}
-      {result?.error && (
-        <div className="error-card">
-          <div className="error-icon">⚠️</div>
-          <div className="error-text">Error al conectar con la API</div>
-          <div className="error-sub">Verifica el formato: Equipo1 vs Equipo2</div>
+      {result?.error && !loading && (
+        <div style={{ margin: '0 18px' }}>
+          <div className="error-card">
+            <div className="error-icon">⚠️</div>
+            <div className="error-text">
+              {lang === 'es' ? 'Error al conectar con la API' : 'Error connecting to API'}
+            </div>
+            <div className="error-sub">
+              {lang === 'es'
+                ? 'Verifica el formato: Equipo1 vs Equipo2'
+                : 'Check format: Team1 vs Team2'}
+            </div>
+          </div>
         </div>
       )}
 
-      <div style={{ height: 20 }} />
+      <div style={{ height: 24 }} />
     </div>
   )
 }

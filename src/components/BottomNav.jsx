@@ -42,7 +42,9 @@ const TABS = [
     ),
     iconInactive: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <rect x="5" y="9" width="3" height="10"/><rect x="10.5" y="5" width="3" height="14"/><rect x="16" y="13" width="3" height="6"/>
+        <rect x="5" y="9" width="3" height="10"/>
+        <rect x="10.5" y="5" width="3" height="14"/>
+        <rect x="16" y="13" width="3" height="6"/>
       </svg>
     ),
   },
@@ -77,39 +79,76 @@ const TABS = [
 ]
 
 export default function BottomNav() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { lang } = useStore()
+  const navigate  = useNavigate()
+  const location  = useLocation()
+  const { lang, isPremium } = useStore()
   const t = translations[lang]
 
   const labels = {
-    home: t.home,
-    picks: t.picks,
-    stats: t.stats,
+    home:    t.home,
+    picks:   t.picks,
+    stats:   t.stats,
     premium: t.premium,
     analyze: t.analysis,
   }
 
-  const isActive = (path) => {
-    if (path === '/') return location.pathname === '/'
-    return location.pathname.startsWith(path)
-  }
+  const isActive = (path) =>
+    path === '/' ? location.pathname === '/' : location.pathname.startsWith(path)
 
   return (
     <nav className="bottom-nav">
       {TABS.map(tab => {
         const active = isActive(tab.path)
+        const isPremTab = tab.id === 'premium'
+
         return (
           <button
             key={tab.id}
             className={`nav-btn ${active ? 'active' : ''}`}
             onClick={() => navigate(tab.path)}
           >
-            <div className={`nav-icon-wrap ${active ? 'active' : ''}`}>
-              {active ? tab.iconActive : tab.iconInactive}
+            <div className="nav-icon-wrap">
+              {/* Icono con color según estado */}
+              <span style={{
+                color: active
+                  ? 'var(--crimson)'
+                  : isPremTab && isPremium
+                    ? 'var(--gold)'
+                    : 'var(--t3)',
+                display: 'flex',
+                alignItems: 'center',
+                transition: 'color 0.2s',
+              }}>
+                {active ? tab.iconActive : tab.iconInactive}
+              </span>
+
+              {/* Punto activo */}
               {active && <div className="nav-active-dot" />}
+
+              {/* Indicador premium en tab de premium */}
+              {isPremTab && isPremium && !active && (
+                <span style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 2,
+                  width: 7,
+                  height: 7,
+                  borderRadius: '50%',
+                  background: 'var(--gold)',
+                  border: '1.5px solid var(--bg)',
+                }} />
+              )}
             </div>
-            <span className="nav-label">{labels[tab.id]}</span>
+
+            <span className="nav-label" style={{
+              color: active
+                ? 'var(--crimson)'
+                : isPremTab && isPremium
+                  ? 'var(--gold)'
+                  : 'var(--t3)',
+            }}>
+              {labels[tab.id]}
+            </span>
           </button>
         )
       })}
