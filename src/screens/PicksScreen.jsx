@@ -316,9 +316,30 @@ export default function PicksScreen() {
         </div>
       ) : (
         <div className="analysis-content">
-          {p.analysis && (
+          {p.analysis && lang === 'es' && (
   <div className="analysis-block">
     <RenderAnalysis text={p.analysis} />
+  </div>
+)}
+{p.analysis && lang === 'en' && (
+  <div className="analysis-block">
+    <div className="analysis-section-title">📊 Match Data</div>
+    <div className="stats-en-grid">
+      <div className="stat-en"><span>Home Win</span><strong>{p.poisson?.p_home_win ?? p.p_home_win ?? '—'}%</strong></div>
+      <div className="stat-en"><span>Draw</span><strong>{p.poisson?.p_draw ?? '—'}%</strong></div>
+      <div className="stat-en"><span>Away Win</span><strong>{p.poisson?.p_away_win ?? p.p_away_win ?? '—'}%</strong></div>
+      <div className="stat-en"><span>BTTS</span><strong>{p.poisson?.p_btts ?? p.p_btts ?? '—'}%</strong></div>
+      <div className="stat-en"><span>Over 2.5</span><strong>{p.poisson?.p_over25 ?? p.p_over25 ?? '—'}%</strong></div>
+      <div className="stat-en"><span>Under 2.5</span><strong>{p.poisson?.p_under25 ?? p.p_under25 ?? '—'}%</strong></div>
+    </div>
+    {p.factores_clave?.length > 0 && (
+      <div className="key-factors">
+        <div className="analysis-section-title">🔑 Key Factors</div>
+        {p.factores_clave.map((f, i) => (
+          <div key={i} className="factor-item">• {f}</div>
+        ))}
+      </div>
+    )}
   </div>
 )}
 {!p.analysis && p.analisis?.map((block, i) => (

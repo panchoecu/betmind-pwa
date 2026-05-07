@@ -1472,4 +1472,49 @@ border-top: 1px solid rgba(255,255,255,0.06);
 .green { color: var(--green); }
 .gold  { color: var(--gold); }
 .red   { color: var(--crimson); }
-.white { color: var(--t1); }
+.white { color: var(--t1); } 
+/* ═══════════════════════════════════════════
+   EN STATS GRID
+═══════════════════════════════════════════ */
+.stats-en-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 10px 0;
+}
+.stat-en {
+  background: var(--bg-2);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--bg-3);
+  padding: 10px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.stat-en span {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--t3);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.stat-en strong {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--green);
+  line-height: 1;
+}
+.key-factors {
+  margin-top: 12px;
+}
+.factor-item {
+  font-size: 12px;
+  color: var(--t2);
+  padding: 4px 0;
+  border-bottom: 1px solid var(--bg-3);
+  line-height: 1.5;
+}
+.factor-item:last-child {
+  border-bottom: none;
+}
