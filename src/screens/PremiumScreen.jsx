@@ -45,20 +45,20 @@ const getFeatures = (t) => [
   { icon: '🔔', title: t.feat6Title, sub: t.feat6Sub },
 ]
 
-const PROOF_STATS = [
-  { value: '88%+', label: 'Winrate' },
-  { value: '+18.7%', label: 'Yield' },
-  { value: '77+', label: 'Picks' },
-  { value: '🔥 6', label: 'Racha' },
-]
-
 export default function PremiumScreen() {
-  const { isPremium, premiumUntil, chatId, lang } = useStore()
-  const t       = translations[lang]
+  const { isPremium, premiumUntil, chatId, lang, stats } = useStore()
+  const t        = translations[lang]
   const navigate = useNavigate()
 
   const PLANS    = getPlans(t, lang)
   const FEATURES = getFeatures(t)
+
+  const PROOF_STATS = [
+    { value: stats ? `${stats.pct}%`    : '88%+',   label: 'Winrate' },
+    { value: stats ? `+${stats.yield}%` : '+18%',   label: 'Yield'   },
+    { value: stats ? `${stats.total}`   : '77+',    label: 'Picks'   },
+    { value: stats ? `🔥 ${stats.racha}`: '🔥 6',   label: 'Racha'   },
+  ]
 
   const handleBuy = (variantId) => {
     const base = `https://betmindai.com/checkout?variant=${variantId}`
@@ -71,7 +71,6 @@ export default function PremiumScreen() {
     <div className="screen">
       <AppHeader />
       <div className="screen-title">{t.myAccount}</div>
-
       <div className="premium-active-card">
         <div className="premium-active-crown">👑</div>
         <div className="premium-active-title">{t.premiumActive}</div>
@@ -86,7 +85,6 @@ export default function PremiumScreen() {
           </div>
         )}
       </div>
-
       <div className="features-list">
         {FEATURES.map((f, i) => (
           <div key={i} className="feature-item">
@@ -114,7 +112,7 @@ export default function PremiumScreen() {
         <div className="premium-hero-title">BetMind Premium</div>
         <div className="premium-hero-sub">{t.premiumHero}</div>
 
-        {/* SOCIAL PROOF */}
+        {/* SOCIAL PROOF — datos reales de la API */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',
@@ -164,7 +162,6 @@ export default function PremiumScreen() {
             {plan.popular && (
               <div className="plan-popular-badge">{t.mostPopular}</div>
             )}
-
             <div className="plan-header">
               <div className="plan-name" style={{ color: plan.accent }}>
                 {plan.name}
@@ -173,33 +170,18 @@ export default function PremiumScreen() {
                 <div className="plan-savings">{plan.savings}</div>
               )}
             </div>
-
             <div className="plan-price">
               {plan.price}
               <span className="plan-period">{plan.period}</span>
             </div>
-
-            {/* MINI FEATURES */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 5,
-              marginBottom: 14,
-            }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 14 }}>
               {[t.feat1Title, t.feat2Title, t.feat3Title].map((f, i) => (
-                <div key={i} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  fontSize: 12,
-                  color: 'var(--t2)',
-                }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--t2)' }}>
                   <span style={{ color: plan.popular ? 'var(--gold)' : 'var(--green)', fontSize: 14 }}>✓</span>
                   {f}
                 </div>
               ))}
             </div>
-
             <div className="plan-cta">
               {plan.popular ? t.choosePlan : t.selectPlan}
             </div>
@@ -209,17 +191,11 @@ export default function PremiumScreen() {
 
       {/* GOOGLE LOGIN NOTE */}
       <div style={{
-        margin: '4px 18px 16px',
-        padding: '14px 16px',
-        background: 'var(--bg-card)',
-        border: '1px solid var(--bg-3)',
-        borderRadius: 'var(--r-md)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        fontSize: 12,
-        color: 'var(--t3)',
-        lineHeight: 1.5,
+        margin: '4px 18px 16px', padding: '14px 16px',
+        background: 'var(--bg-card)', border: '1px solid var(--bg-3)',
+        borderRadius: 'var(--r-md)', display: 'flex',
+        alignItems: 'center', gap: 12, fontSize: 12,
+        color: 'var(--t3)', lineHeight: 1.5,
       }}>
         <span style={{ fontSize: 22, flexShrink: 0 }}>🔐</span>
         <span>
