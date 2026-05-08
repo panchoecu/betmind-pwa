@@ -62,7 +62,9 @@ export default function PremiumScreen() {
 
   const handleBuy = () => {
     const base = `https://nura.lemonsqueezy.com/checkout/buy/ac29116a-8103-4236-9287-621edda68e5c`
-    const url  = chatId ? `${base}?checkout[custom][chat_id]=${chatId}` : base
+    const successUrl = encodeURIComponent('https://betmind-pwa.pages.dev?payment=success')
+    let url = `${base}?checkout[success_url]=${successUrl}`
+    if (chatId) url += `&checkout[custom][chat_id]=${chatId}`
     window.open(url, '_blank')
   }
 
