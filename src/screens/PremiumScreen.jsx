@@ -60,9 +60,9 @@ export default function PremiumScreen() {
     { value: stats ? `🔥 ${stats.racha}`: '🔥 6',   label: 'Racha'   },
   ]
 
-  const handleBuy = (variantId) => {
-    const base = `https://betmindai.com/checkout?variant=${variantId}`
-    const url  = chatId ? `${base}&chat_id=${chatId}` : base
+  const handleBuy = () => {
+    const base = `https://nura.lemonsqueezy.com/checkout/buy/ac29116a-8103-4236-9287-621edda68e5c`
+    const url  = chatId ? `${base}?checkout[custom][chat_id]=${chatId}` : base
     window.open(url, '_blank')
   }
 
@@ -157,7 +157,7 @@ export default function PremiumScreen() {
           <div
             key={plan.id}
             className={`plan-card ${plan.popular ? 'popular' : ''}`}
-            onClick={() => handleBuy(plan.variantId)}
+            onClick={() => handleBuy()}
           >
             {plan.popular && (
               <div className="plan-popular-badge">{t.mostPopular}</div>
