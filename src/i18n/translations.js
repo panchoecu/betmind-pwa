@@ -170,7 +170,7 @@ export const translations = {
     resultsAfter: 'Results appear after nightly verification',
     premiumHero: 'Access all picks and complete AI analysis from 7 agents',
     whatsIncluded: "What's included in Premium?",
-    guaranteeTitle: 'Verified winrate 88.3%',
+    guaranteeTitle: 'Verified track record',
     guaranteeSub: 'Real results · No fake picks · Public track record',
     mostPopular: '⭐ MOST POPULAR',
     choosePlan: '⚡ CHOOSE PLAN',
