@@ -46,14 +46,14 @@ const getFeatures = (t) => [
 ]
 
 const PROOF_STATS = [
-  { value: stats ? `${stats.pct}%` : '88%+', label: 'Winrate' },
+  { value: '88%+', label: 'Winrate' },
   { value: '+18.7%', label: 'Yield' },
   { value: '77+', label: 'Picks' },
   { value: '🔥 6', label: 'Racha' },
 ]
 
 export default function PremiumScreen() {
-  const { isPremium, premiumUntil, chatId, lang, stats } = useStore()
+  const { isPremium, premiumUntil, chatId, lang } = useStore()
   const t       = translations[lang]
   const navigate = useNavigate()
 
