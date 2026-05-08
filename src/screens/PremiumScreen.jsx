@@ -46,7 +46,7 @@ const getFeatures = (t) => [
 ]
 
 const PROOF_STATS = [
-  { value: '88.3%', label: 'Winrate' },
+  { value: '88%+', label: 'Winrate' },
   { value: '+18.7%', label: 'Yield' },
   { value: '77+', label: 'Picks' },
   { value: '🔥 6', label: 'Racha' },
