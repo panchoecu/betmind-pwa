@@ -68,11 +68,24 @@ function AppContent() {
       setRemaining(1 - (data?.analyses_today || 0))
     }
 
-    const meta = supabaseUser?.user_metadata
-    if (meta?.isPremium) {
-      setIsPremium(true)
-      if (meta.premiumUntil) setPremiumUntil(new Date(meta.premiumUntil))
-      setRemaining(15)
+    // Verificar plan por email en la API
+    const email = supabaseUser?.email
+    if (email) {
+      try {
+        const res = await fetch(`https://api.tuagentevirtual.info/user/email/${encodeURIComponent(email)}`)
+        const data = await res.json()
+        if (data?.plan === 'premium') {
+          if (data.premium_until) {
+            const exp = new Date(data.premium_until)
+            if (exp > new Date()) { setIsPremium(true); setPremiumUntil(exp) }
+          } else {
+            setIsPremium(true)
+          }
+          setRemaining(15 - (data.analyses_today || 0))
+        }
+      } catch (e) {
+        console.error('Error verificando plan por email:', e)
+      }
     }
   }
 
