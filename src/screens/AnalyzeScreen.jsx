@@ -137,7 +137,7 @@ function AgentLoader({ step, t }) {
 ═══════════════════════════════════════════════════════════ */
 export default function AnalyzeScreen() {
   const navigate = useNavigate()
-  const { isPremium, remaining, setRemaining, lang } = useStore()
+  const { isPremium, remaining, setRemaining, lang, user, chatId } = useStore()
   const t = translations[lang]
 
   const [input,   setInput]   = useState('')
@@ -163,7 +163,7 @@ export default function AnalyzeScreen() {
     if (!canAnalyze) return
     setLoading(true)
     setResult(null)
-    const data = await analyzeMatch(input, lang)
+    const data = await analyzeMatch(input, lang, { ...user, chat_id: chatId })
     setLoading(false)
     setResult(data)
     if (!data.error && remaining !== null) {

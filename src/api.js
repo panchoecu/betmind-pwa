@@ -42,7 +42,7 @@ export const fetchHistory = async () => {
   } catch { return [] }
 }
 
-export const analyzeMatch = async (input, lang = 'es') => {
+export const analyzeMatch = async (input, lang = 'es', user = null) => {
   try {
     const parts = input.split(' vs ')
     if (parts.length < 2) throw new Error('Formato inválido')
