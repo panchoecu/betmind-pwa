@@ -14,7 +14,7 @@ function RenderAnalysis({ text }) {
   const sections = []
   let current = null
   for (const line of lines) {
-    const clean = line.replace(/[*_]/g, '').trim()
+    const clean = line.replace(/[*_`]/g, '').replace(/[─━]+/g, '').trim()
     if (!clean) continue
     if (clean.match(/^(🏠|✈️|📋|🔑|📅|⚽|📊|⚠️|🔥|💡|📈|🧠|⚖️)/)) {
       if (current) sections.push(current)

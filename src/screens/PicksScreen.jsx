@@ -206,8 +206,8 @@ function RenderAnalysis({ text }) {
   const sections = []
   let current = null
   for (const line of lines) {
-    const clean = line.replace(/[*_]/g, '').trim()
-    if (!clean) continue
+    const clean = line.replace(/[*_`]/g, '').replace(/[─━]+/g, '').trim()
+    if (!clean || clean.match(/^[─━\-]{3,}$/) || clean.match(/^(MERCADO|PROB|Cuota)/) || clean.match(/Victoria Local.*Empate/) || clean.match(/BTTS.*Over/) || clean.match(/Goles esp/)) continue
     if (clean.match(/^(🏠|✈️|📋|🔑|📅|⚽|📊|⚠️|🔥|💡|📈|🧠|⚖️)/)) {
       if (current) sections.push(current)
       current = { title: clean, text: '' }
