@@ -60,7 +60,14 @@ export const analyzeMatch = async (input, lang = 'es') => {
     })
     if (!r.ok) throw new Error('API error')
     const data = await r.json()
-    return { ...data, analisis: data.analisis || data.analysis || data.full_analysis || '' }
+    return {
+      ...data,
+      pick: data.pick_principal || data.pick || '',
+      odd: data.odd_pick || data.odd || '—',
+      confianza: data.confianza || data.confidence || 0,
+      ev: data.value_edge || data.ev || 0,
+      analisis: data.analisis || data.analysis || data.full_analysis || '',
+    }
   } catch (e) { return { error: e.message } }
 }
 
