@@ -59,7 +59,8 @@ export const analyzeMatch = async (input, lang = 'es') => {
       })
     })
     if (!r.ok) throw new Error('API error')
-    return await r.json()
+    const data = await r.json()
+    return { ...data, analisis: data.analisis || data.analysis || data.full_analysis || '' }
   } catch (e) { return { error: e.message } }
 }
 
