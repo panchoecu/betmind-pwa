@@ -75,9 +75,9 @@ export default function HomeScreen() {
         />
         <StatCard
           index={2}
-          label={t.roiMonth}
-          value={`+${s.roi_mes}%`}
-          sub={t.accumulated}
+          label="PROFIT MES"
+          value={`+${s.profit_mes ?? 0}u`}
+          sub="unidades"
           color="#D4A935"
         />
         <StatCard

@@ -28,19 +28,23 @@ function AppContent() {
       if (data.top_picks?.length > 0) setPicks(data.top_picks)
       if (data.picks_arriesgados) setRiskyPicks(data.picks_arriesgados)
     })
-    fetchTrackRecord().then(data => {
-      if (!data?.available) return
-      setStats({
-        mes:      'Mayo 2026',
-        ganados:  data.wins ?? 0,
-        perdidos: (data.total - data.wins) ?? 0,
-        total:    data.total ?? 0,
-        pct:      data.pct ?? 0,
-        yield:    data.yield_pct ?? data.avg_roi ?? 0,
-        roi_mes:  Math.round((data.avg_roi ?? 0) * (data.total ?? 0)),
-        racha:    data.streak ?? 0,
+    fetch('https://api.tuagentevirtual.info/history')
+      .then(r => r.json())
+      .then(history => {
+        const profit_mes = Array.isArray(history) && history.length > 0 ? (history[0].profit_units ?? 0) : 0
+        fetchTrackRecord().then(data => {
+          if (!data?.available) return
+          setStats({
+            ganados:    data.wins ?? 0,
+            perdidos:   (data.total - data.wins) ?? 0,
+            total:      data.total ?? 0,
+            pct:        data.pct ?? 0,
+            yield:      data.yield_pct ?? data.avg_roi ?? 0,
+            profit_mes: profit_mes,
+            racha:      data.streak ?? 0,
+          })
+        })
       })
-    })
   }
 
   const loadUserPlan = async (supabaseUser) => {
