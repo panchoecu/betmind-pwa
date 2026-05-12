@@ -63,7 +63,7 @@ export const analyzeMatch = async (input, lang = 'es', user = null) => {
     return {
       ...data,
       pick: data.pick_principal || data.pick || '',
-      odd: data.score_global || data.odd_pick || data.odd || '—',
+      odd: data.odd || data.odd_pick || data.score_global || '—',
       confianza: data.confianza || data.confidence || 0,
       ev: data.value_edge || data.ev || 0,
       analisis: data.analisis || data.analysis || data.full_analysis || '',
