@@ -80,6 +80,9 @@ function FormDots({ homeTeam, awayTeam, analysis, homeForm, awayForm, lang }) {
 
   
 
+  const resolvedHomeForm = homeForm || parseForm(analysis, homeTeam)
+  const resolvedAwayForm = awayForm || parseForm(analysis, awayTeam)
+
   const renderDots = (form) => {
     if (!form) {
       return [1,2,3,4,5].map(i => (
