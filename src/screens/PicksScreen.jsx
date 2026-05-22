@@ -61,7 +61,7 @@ function PoissonMatrix({ p, t, lang }) {
 }
 
 /* ─── FORM DOTS (W/D/L últimos 5) ───────────────────────── */
-function FormDots({ homeTeam, awayTeam, analysis, lang }) {
+function FormDots({ homeTeam, awayTeam, analysis, homeForm, awayForm, lang }) {
   // Intenta parsear forma del texto de análisis o factores
   // Si no hay data, muestra placeholders
   const parseForm = (text, team) => {
@@ -78,8 +78,7 @@ function FormDots({ homeTeam, awayTeam, analysis, lang }) {
     return null
   }
 
-  const homeForm = parseForm(analysis, homeTeam)
-  const awayForm = parseForm(analysis, awayTeam)
+  
 
   const renderDots = (form) => {
     if (!form) {
@@ -100,11 +99,11 @@ function FormDots({ homeTeam, awayTeam, analysis, lang }) {
       <div className="form-teams-wrap">
         <div>
           <div className="form-team-label">{homeTeam}</div>
-          <div className="form-dots">{renderDots(homeForm)}</div>
+          <div className="form-dots">{renderDots(resolvedHomeForm)}</div>
         </div>
         <div>
           <div className="form-team-label">{awayTeam}</div>
-          <div className="form-dots">{renderDots(awayForm)}</div>
+          <div className="form-dots">{renderDots(resolvedAwayForm)}</div>
         </div>
       </div>
       {!homeForm && (
@@ -492,6 +491,8 @@ export default function PicksScreen() {
             homeTeam={p.home}
             awayTeam={p.away}
             analysis={p.analysis}
+            homeForm={p.home_last_5}
+            awayForm={p.away_last_5}
             lang={lang}
           />
 
