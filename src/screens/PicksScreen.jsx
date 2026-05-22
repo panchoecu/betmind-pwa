@@ -291,7 +291,7 @@ export default function PicksScreen() {
     home:       p.home       || p.home_team,
     away:       p.away       || p.away_team,
     pick:       p.pick       || p.pick_principal,
-    conf:       p.conf       || p.confidence,
+    conf:       p.confidence || p.conf,
     conservador: p.conservador || p.pick_conservador,
     locked:     !isPremium && i >= 2,
   }))

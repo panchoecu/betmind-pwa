@@ -8,5 +8,7 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     autoRefreshToken:   true,
     persistSession:     true,
     detectSessionInUrl: true,
+    storageKey:         'betmind-supabase-auth',
+    storage:            window.localStorage,
   },
 })
