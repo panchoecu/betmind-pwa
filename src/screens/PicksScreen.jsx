@@ -293,7 +293,7 @@ export default function PicksScreen() {
     pick:       p.pick       || p.pick_principal,
     conf:       p.confidence || p.conf,
     conservador: p.conservador || p.pick_conservador,
-    locked:     !isPremium && i >= 2,
+    locked:     !isPremium && i >= 1,
   }))
 
   const p         = mainPicks[selIdx] || {}
