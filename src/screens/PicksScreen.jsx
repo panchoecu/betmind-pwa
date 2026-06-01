@@ -395,7 +395,7 @@ export default function PicksScreen() {
       {!isPremium && (
         <div className="picks-free-note">
           {lang === 'en'
-            ? `2 of ${mainPicks.length} picks unlocked · `
+            ? `1 of ${mainPicks.length} picks unlocked · `
             : `2 de ${mainPicks.length} picks desbloqueados · `}
           <span className="link" onClick={() => navigate('/premium')}>
             {lang === 'en' ? 'Activate Premium →' : 'Activa Premium →'}
