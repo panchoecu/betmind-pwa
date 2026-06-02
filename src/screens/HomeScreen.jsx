@@ -84,7 +84,7 @@ export default function HomeScreen() {
           index={3}
           label={t.picksCount}
           value={allPicks.length}
-          sub={isPremium ? t.fullAccess : `${2} ${t.free}`}
+          sub={isPremium ? t.fullAccess : `${1} ${t.free}`}
           color="#F2F2FF"
         />
       </div>
