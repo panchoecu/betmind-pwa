@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useStore from '../store/useStore'
 import { translations } from '../i18n/translations'
+import { fetchTrackRecord } from '../api'
 
-const PROOF = [
-  { value: '—', label: 'Winrate' },
-  { value: '—', label: 'Yield' },
-  { value: '—', label: 'Picks' },
-  { value: '—', label: 'Racha' },
+const DEFAULT_PROOF = [
+  { value: '...', label: 'Winrate' },
+  { value: '...', label: 'Yield' },
+  { value: '...', label: 'Picks' },
+  { value: '...', label: 'Racha' },
 ]
 
 export default function LoginScreen() {
@@ -18,6 +19,19 @@ export default function LoginScreen() {
   const [sent,    setSent]    = useState(false)
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState(null)
+  const [proof,   setProof]   = useState(DEFAULT_PROOF)
+
+  useEffect(() => {
+    fetchTrackRecord().then(data => {
+      if (!data?.available) return
+      setProof([
+        { value: `${data.pct}%`, label: 'Winrate' },
+        { value: `+${data.yield_pct ?? data.avg_roi ?? 0}%`, label: 'Yield' },
+        { value: `${data.total}`, label: 'Picks' },
+        { value: `🔥 ${data.streak ?? 0}`, label: 'Racha' },
+      ])
+    })
+  }, [])
 
   const handleGoogle = async () => {
     setLoading(true)
@@ -148,7 +162,7 @@ export default function LoginScreen() {
 
         {/* PROOF GRID */}
         <div style={styles.proofGrid}>
-          {PROOF.map((p, i) => (
+          {proof.map((p, i) => (
             <div key={i} style={styles.proofCard}>
               <div style={{
                 fontFamily: "'Bebas Neue', cursive",
