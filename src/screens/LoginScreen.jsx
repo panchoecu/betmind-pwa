@@ -3,10 +3,10 @@ import useStore from '../store/useStore'
 import { translations } from '../i18n/translations'
 
 const PROOF = [
-  { value: '88.3%', label: 'Winrate' },
-  { value: '+18.7%', label: 'Yield' },
-  { value: '77+', label: 'Picks' },
-  { value: '🔥 6', label: 'Racha' },
+  { value: '—', label: 'Winrate' },
+  { value: '—', label: 'Yield' },
+  { value: '—', label: 'Picks' },
+  { value: '—', label: 'Racha' },
 ]
 
 export default function LoginScreen() {

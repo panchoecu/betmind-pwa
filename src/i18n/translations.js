@@ -73,7 +73,7 @@ export const translations = {
     resultsAfter: 'Los resultados aparecen después de verificación nocturna',
     premiumHero: 'Accede a todos los picks y análisis completos de 7 agentes IA',
     whatsIncluded: '¿Qué incluye Premium?',
-    guaranteeTitle: 'Winrate verificado 88.3%',
+    guaranteeTitle: 'Track record verificado',
     guaranteeSub: 'Resultados reales · Sin picks inventados · Track record público',
     mostPopular: '⭐ MÁS POPULAR',
     choosePlan: '⚡ ELEGIR PLAN',

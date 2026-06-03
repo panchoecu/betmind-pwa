@@ -34,7 +34,7 @@ export default function StatsScreen() {
 
   useEffect(() => {
     setLoading(true)
-    Promise.all([fetchPicksResults(100), fetchHistory()]).then(([results, hist]) => {
+    Promise.all([fetchPicksResults(200), fetchHistory()]).then(([results, hist]) => {
       setPickResults(results)
       setHistory(hist)
       setLoading(false)

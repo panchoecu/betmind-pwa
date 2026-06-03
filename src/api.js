@@ -1,5 +1,5 @@
 const API_URL = 'https://api.tuagentevirtual.info'
-const WEBHOOK_URL = 'https://webhook.tuagentevirtual.info'
+
 
 export const fetchDailyPicks = async () => {
   try {
@@ -11,13 +11,13 @@ export const fetchDailyPicks = async () => {
 
 export const fetchTrackRecord = async () => {
   try {
-    const r = await fetch(`${WEBHOOK_URL}/track-record`)
+    const r = await fetch(`${API_URL}/track-record`)
     if (!r.ok) return null
     return await r.json()
   } catch { return null }
 }
 
-export const fetchPicksResults = async (limit = 100) => {
+export const fetchPicksResults = async (limit = 200) => {
   try {
     const r = await fetch(`${API_URL}/picks-results?limit=${limit}`)
     if (!r.ok) return []

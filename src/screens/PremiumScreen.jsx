@@ -54,10 +54,10 @@ export default function PremiumScreen() {
   const FEATURES = getFeatures(t)
 
   const PROOF_STATS = [
-    { value: stats ? `${stats.pct}%`    : '88%+',   label: 'Winrate' },
-    { value: stats ? `+${stats.yield}%` : '+18%',   label: 'Yield'   },
-    { value: stats ? `${stats.total}`   : '77+',    label: 'Picks'   },
-    { value: stats ? `🔥 ${stats.racha}`: '🔥 6',   label: 'Racha'   },
+    { value: stats ? `${stats.pct}%`    : '—',   label: 'Winrate' },
+    { value: stats ? `+${stats.yield}%` : '—',   label: 'Yield'   },
+    { value: stats ? `${stats.total}`   : '—',    label: 'Picks'   },
+    { value: stats ? `🔥 ${stats.racha}`: '—',   label: 'Racha'   },
   ]
 
   const handleBuy = () => {
