@@ -60,14 +60,22 @@ function AppContent() {
       localStorage.setItem('bm_chat_id', chatId)
       const data = await fetchUser(chatId)
       if (data?.plan === 'premium') {
+        let active = false
         if (data.premium_until) {
           const exp = new Date(data.premium_until)
-          if (exp > new Date()) { setIsPremium(true); setPremiumUntil(exp) }
+          if (exp > new Date()) {
+            setIsPremium(true)
+            setPremiumUntil(exp)
+            active = true
+          }
         } else {
           setIsPremium(true)
+          active = true
         }
-        setRemaining(15 - (data.analyses_today || 0))
-        return
+        if (active) {
+          setRemaining(15 - (data.analyses_today || 0))
+          return
+        }
       }
       setRemaining(1 - (data?.analyses_today || 0))
     }
