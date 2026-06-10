@@ -43,32 +43,60 @@ export const fetchHistory = async () => {
 }
 
 export const analyzeMatch = async (input, lang = 'es', user = null) => {
+  const connectionMsg = lang === 'es'
+    ? 'No se pudo conectar con el servidor. Intenta de nuevo.'
+    : 'Could not connect to the server. Please try again.'
   try {
     const parts = input.split(' vs ')
-    if (parts.length < 2) throw new Error('Formato inválido')
+    if (parts.length < 2) {
+      return {
+        error: true,
+        message: lang === 'es'
+          ? 'Formato inválido. Usa: Equipo1 vs Equipo2'
+          : 'Invalid format. Use: Team1 vs Team2',
+      }
+    }
+    const date = new Date().toISOString().split('T')[0]
+    const chatId = user?.id ?? user?.chat_id ?? null
     const r = await fetch(`${API_URL}/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         home_team: parts[0].trim(),
         away_team: parts[1].trim(),
-        league: 'Auto',
-        match_date: new Date().toISOString().split('T')[0],
-        odds: { home: 0, draw: 0, away: 0 },
-        lang: lang
-      })
+        sport: 'football',
+        date,
+        chat_id: chatId,
+        lang,
+      }),
     })
-    if (!r.ok) throw new Error('API error')
-    const data = await r.json()
+    const data = await r.json().catch(() => ({}))
+
+    if (!r.ok) {
+      const fallback = lang === 'es'
+        ? 'No pudimos completar el análisis en este momento.'
+        : 'We could not complete the analysis right now.'
+      return {
+        success: false,
+        noPick: r.status === 422,
+        notFound: r.status === 404,
+        status: r.status,
+        message: data.message || data.detail || fallback,
+      }
+    }
+
     return {
       ...data,
+      success: true,
       pick: data.pick_principal || data.pick || '',
       odd: data.odd || data.odd_pick || data.score_global || '—',
       confianza: data.confianza || data.confidence || 0,
       ev: data.value_edge || data.ev || 0,
       analisis: data.analisis || data.analysis || data.full_analysis || '',
     }
-  } catch (e) { return { error: e.message } }
+  } catch {
+    return { error: true, message: connectionMsg }
+  }
 }
 
 export const LEAGUE_FLAGS = {

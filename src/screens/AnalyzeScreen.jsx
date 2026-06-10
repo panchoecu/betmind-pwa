@@ -166,10 +166,13 @@ export default function AnalyzeScreen() {
     const data = await analyzeMatch(input, lang, { ...user, chat_id: chatId })
     setLoading(false)
     setResult(data)
-    if (!data.error && remaining !== null) {
+    const isSuccess = !data.error && !data.noPick && !data.notFound && data.success !== false
+    if (isSuccess && remaining !== null) {
       setRemaining(Math.max(0, remaining - 1))
     }
   }
+
+  const isAnalyzeSuccess = result && !result.error && !result.noPick && !result.notFound && result.success !== false
 
   const remainingCount = remaining ?? (isPremium ? 15 : 1)
 
@@ -253,7 +256,7 @@ export default function AnalyzeScreen() {
       {loading && <AgentLoader step={step} t={t} />}
 
       {/* RESULT */}
-      {result && !loading && !result.error && (
+      {isAnalyzeSuccess && !loading && (
         <div style={{ margin: '0 18px' }}>
 
           {/* MATCH TITLE */}
@@ -362,18 +365,65 @@ export default function AnalyzeScreen() {
         </div>
       )}
 
-      {/* ERROR */}
+      {/* NO PICK — 422 */}
+      {result?.noPick && !loading && (
+        <div style={{ margin: '0 18px' }}>
+          <div className="error-card" style={{ borderColor: 'rgba(212,169,53,0.35)' }}>
+            <div className="error-icon">📊</div>
+            <div className="error-text">
+              {lang === 'es' ? 'Sin pick claro' : 'No clear pick'}
+            </div>
+            <div className="error-sub">
+              {result.message || (lang === 'es'
+                ? 'No encontramos una oportunidad con suficiente ventaja estadística para este partido.'
+                : 'We did not find a pick with enough statistical edge for this match.')}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NOT FOUND — 404 */}
+      {result?.notFound && !loading && (
+        <div style={{ margin: '0 18px' }}>
+          <div className="error-card" style={{ borderColor: 'rgba(192,20,42,0.25)' }}>
+            <div className="error-icon">🔍</div>
+            <div className="error-text">
+              {lang === 'es' ? 'Partido no encontrado' : 'Match not found'}
+            </div>
+            <div className="error-sub">
+              {result.message || (lang === 'es'
+                ? 'Partido no encontrado. Verifica los nombres de los equipos o la fecha.'
+                : 'Match not found. Check team names or match date.')}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* OTHER API ERRORS */}
+      {result && !loading && !result.error && !result.noPick && !result.notFound && result.success === false && result.message && (
+        <div style={{ margin: '0 18px' }}>
+          <div className="error-card">
+            <div className="error-icon">⚠️</div>
+            <div className="error-text">
+              {lang === 'es' ? 'No pudimos completar el análisis' : 'Analysis could not be completed'}
+            </div>
+            <div className="error-sub">{result.message}</div>
+          </div>
+        </div>
+      )}
+
+      {/* CONNECTION ERROR — red/timeout only */}
       {result?.error && !loading && (
         <div style={{ margin: '0 18px' }}>
           <div className="error-card">
             <div className="error-icon">⚠️</div>
             <div className="error-text">
-              {lang === 'es' ? 'Error al conectar con la API' : 'Error connecting to API'}
+              {lang === 'es' ? 'Error de conexión' : 'Connection error'}
             </div>
             <div className="error-sub">
-              {lang === 'es'
-                ? 'Verifica el formato: Equipo1 vs Equipo2'
-                : 'Check format: Team1 vs Team2'}
+              {result.message || (lang === 'es'
+                ? 'No se pudo conectar con el servidor. Intenta de nuevo.'
+                : 'Could not connect to the server. Please try again.')}
             </div>
           </div>
         </div>
