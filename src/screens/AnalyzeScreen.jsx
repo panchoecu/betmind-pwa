@@ -159,11 +159,15 @@ export default function AnalyzeScreen() {
     return () => clearInterval(interval)
   }, [loading])
 
+  const safeResultMessage = (message, fallback) => (
+    typeof message === 'string' ? message : fallback
+  )
+
   const handleAnalyze = async () => {
     if (!canAnalyze) return
     setLoading(true)
     setResult(null)
-    const data = await analyzeMatch(input, lang, { ...user, chat_id: chatId })
+    const data = await analyzeMatch(input, lang, { chat_id: chatId })
     setLoading(false)
     setResult(data)
     const isSuccess = !data.error && !data.noPick && !data.notFound && data.success !== false
@@ -374,9 +378,12 @@ export default function AnalyzeScreen() {
               {lang === 'es' ? 'Sin pick claro' : 'No clear pick'}
             </div>
             <div className="error-sub">
-              {result.message || (lang === 'es'
-                ? 'No encontramos una oportunidad con suficiente ventaja estadística para este partido.'
-                : 'We did not find a pick with enough statistical edge for this match.')}
+              {safeResultMessage(
+                result.message,
+                lang === 'es'
+                  ? 'No encontramos una oportunidad con suficiente ventaja estadística para este partido.'
+                  : 'We did not find a pick with enough statistical edge for this match.',
+              )}
             </div>
           </div>
         </div>
@@ -391,23 +398,33 @@ export default function AnalyzeScreen() {
               {lang === 'es' ? 'Partido no encontrado' : 'Match not found'}
             </div>
             <div className="error-sub">
-              {result.message || (lang === 'es'
-                ? 'Partido no encontrado. Verifica los nombres de los equipos o la fecha.'
-                : 'Match not found. Check team names or match date.')}
+              {safeResultMessage(
+                result.message,
+                lang === 'es'
+                  ? 'Partido no encontrado. Verifica los nombres de los equipos o la fecha.'
+                  : 'Match not found. Check team names or match date.',
+              )}
             </div>
           </div>
         </div>
       )}
 
       {/* OTHER API ERRORS */}
-      {result && !loading && !result.error && !result.noPick && !result.notFound && result.success === false && result.message && (
+      {result && !loading && !result.error && !result.noPick && !result.notFound && result.success === false && (
         <div style={{ margin: '0 18px' }}>
           <div className="error-card">
             <div className="error-icon">⚠️</div>
             <div className="error-text">
               {lang === 'es' ? 'No pudimos completar el análisis' : 'Analysis could not be completed'}
             </div>
-            <div className="error-sub">{result.message}</div>
+            <div className="error-sub">
+              {safeResultMessage(
+                result.message,
+                lang === 'es'
+                  ? 'No pudimos completar el análisis en este momento.'
+                  : 'We could not complete the analysis right now.',
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -421,9 +438,12 @@ export default function AnalyzeScreen() {
               {lang === 'es' ? 'Error de conexión' : 'Connection error'}
             </div>
             <div className="error-sub">
-              {result.message || (lang === 'es'
-                ? 'No se pudo conectar con el servidor. Intenta de nuevo.'
-                : 'Could not connect to the server. Please try again.')}
+              {safeResultMessage(
+                result.message,
+                lang === 'es'
+                  ? 'No se pudo conectar con el servidor. Intenta de nuevo.'
+                  : 'Could not connect to the server. Please try again.',
+              )}
             </div>
           </div>
         </div>

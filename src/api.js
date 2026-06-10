@@ -42,6 +42,28 @@ export const fetchHistory = async () => {
   } catch { return [] }
 }
 
+/** Telegram chat_id only — never Supabase user.id (UUID). */
+export function resolveChatId(user) {
+  const rawChatId = user?.chat_id ?? null
+  if (rawChatId == null || rawChatId === '') return null
+  if (Number.isInteger(rawChatId)) return rawChatId
+  const parsed = Number(rawChatId)
+  return Number.isInteger(parsed) ? parsed : null
+}
+
+export function getApiMessage(data, lang = 'es') {
+  const fallback = lang === 'es'
+    ? 'No pudimos completar el análisis en este momento.'
+    : 'We could not complete the analysis right now.'
+
+  if (typeof data?.message === 'string') return data.message
+  if (typeof data?.detail === 'string') return data.detail
+  if (Array.isArray(data?.detail)) {
+    return data.detail[0]?.msg || fallback
+  }
+  return fallback
+}
+
 export const analyzeMatch = async (input, lang = 'es', user = null) => {
   const connectionMsg = lang === 'es'
     ? 'No se pudo conectar con el servidor. Intenta de nuevo.'
@@ -57,7 +79,7 @@ export const analyzeMatch = async (input, lang = 'es', user = null) => {
       }
     }
     const date = new Date().toISOString().split('T')[0]
-    const chatId = user?.id ?? user?.chat_id ?? null
+    const chatId = resolveChatId(user)
     const r = await fetch(`${API_URL}/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -73,15 +95,19 @@ export const analyzeMatch = async (input, lang = 'es', user = null) => {
     const data = await r.json().catch(() => ({}))
 
     if (!r.ok) {
-      const fallback = lang === 'es'
-        ? 'No pudimos completar el análisis en este momento.'
-        : 'We could not complete the analysis right now.'
+      const message = getApiMessage(data, lang)
+      const noPick = r.status === 422
+        && data.success === false
+        && typeof data.message === 'string'
+      const notFound = r.status === 404
+        && data.success === false
+        && typeof data.message === 'string'
       return {
         success: false,
-        noPick: r.status === 422,
-        notFound: r.status === 404,
+        noPick,
+        notFound,
         status: r.status,
-        message: data.message || data.detail || fallback,
+        message,
       }
     }
 
