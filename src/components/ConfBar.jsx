@@ -3,8 +3,11 @@ import useStore from '../store/useStore'
 
 export default function ConfBar({ value }) {
   const { lang } = useStore()
-  const color = confColor(value)
-  const pct = Math.min(100, Math.max(0, parseFloat(value) || 0))
+  const parsed = parseFloat(value)
+  if (!Number.isFinite(parsed) || parsed <= 0) return null
+
+  const color = confColor(parsed)
+  const pct = Math.min(100, Math.max(0, parsed))
   return (
     <div className="conf-bar-wrap">
       <div className="conf-bar-bg">
@@ -14,7 +17,7 @@ export default function ConfBar({ value }) {
         />
       </div>
       <span className="conf-bar-label" style={{ color }}>
-        {value}% — {pct >= 70 ? (lang === 'en' ? 'HIGH' : 'ALTA') : pct >= 60 ? (lang === 'en' ? 'MEDIUM' : 'MEDIA') : (lang === 'en' ? 'LOW' : 'BAJA')}
+        {parsed}% — {pct >= 70 ? (lang === 'en' ? 'HIGH' : 'ALTA') : pct >= 60 ? (lang === 'en' ? 'MEDIUM' : 'MEDIA') : (lang === 'en' ? 'LOW' : 'BAJA')}
       </span>
     </div>
   )

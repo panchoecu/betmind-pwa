@@ -136,13 +136,13 @@ export default function HomeScreen() {
               <span className="top-pick-odd">@{topPick.odd}</span>
             </div>
 
-            {/* CONF BAR */}
-            <div style={{ padding: '0 4px 4px' }}>
-              <ConfBar value={topPick.conf} />
-            </div>
-
-            {/* AI EDGE */}
-            <AIEdgeBadge ev={topPick.ev} conf={topPick.conf} />
+            {/* CONF BAR + AI EDGE (Daily only — WC uses commercial fields in detail) */}
+            {!topPick.is_world_cup && (
+              <div style={{ padding: '0 4px 4px' }}>
+                <ConfBar value={topPick.conf} />
+              </div>
+            )}
+            {!topPick.is_world_cup && <AIEdgeBadge ev={topPick.ev} conf={topPick.conf} />}
 
             <div className="top-pick-arrow">
               {lang === 'en' ? 'View full analysis →' : 'Ver análisis completo →'}
@@ -159,7 +159,7 @@ export default function HomeScreen() {
           </div>
           <div className="preview-picks">
             {restPicks.map((p, i) => {
-              const locked    = !isPremium && i >= 1
+              const locked    = !isPremium && !p.free && p.publication_tier !== 'free'
               const tierColor = TIER_COLOR[p.tier] || '#888'
               return (
                 <div
@@ -196,19 +196,21 @@ export default function HomeScreen() {
                         <span className="preview-pick" style={{ color: tierColor }}>
                           {p.pick}
                         </span>
-                        <span className="preview-odd">@{p.odd}</span>
+                        <span className="preview-odd">@{p.odd || '—'}</span>
+                        {Number.isFinite(parseFloat(p.conf)) && (
                         <span
                           className="preview-conf"
                           style={{ color: confColor(p.conf) }}
                         >
-                          {p.conf}%
+                          {parseFloat(p.conf)}%
                         </span>
+                        )}
                       </>
                     )}
                     <span className="preview-arrow">›</span>
                   </div>
 
-                  {!locked && <ConfBar value={p.conf} />}
+                  {!locked && !p.is_world_cup && <ConfBar value={p.conf} />}
                 </div>
               )
             })}

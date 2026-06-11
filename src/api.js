@@ -155,8 +155,9 @@ export const confColor = (conf) => {
 }
 
 export const evLabel = (ev, t) => {
-  if (!ev) return '—'
+  if (ev === null || ev === undefined || ev === '') return '—'
   const n = parseFloat(ev)
+  if (!Number.isFinite(n) || n <= 0) return '—'
   const pct = `+${n.toFixed(1)}%`
   if (n >= 15) return `📈 ${pct} — ${t.excellent}`
   if (n >= 8)  return `📈 ${pct} — ${t.good}`
