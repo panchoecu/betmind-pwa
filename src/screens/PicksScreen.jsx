@@ -6,6 +6,9 @@ import { getFlag, confColor, evLabel, staking } from '../api'
 import AppHeader from '../components/AppHeader'
 import ConfBar from '../components/ConfBar'
 import AIEdgeBadge from '../components/AIEdgeBadge'
+import WcPickDataRows from '../components/wc/WcPickDataRows'
+import WcPoisson1x2 from '../components/wc/WcPoisson1x2'
+import { getWcOdd, finitePositive } from '../components/wc/wcPickDisplay'
 
 const TIER_COLOR = { S: '#C0142A', A: '#D4A935', B: '#4ADE80' }
 
@@ -504,8 +507,10 @@ export default function PicksScreen() {
           <div className="locked-title">{t.lockedPick}</div>
           <div className="locked-sub">{t.lockedSub}</div>
           <div className="locked-odds">
-            {lang === 'en' ? 'Odds' : 'Cuota'}: @{p.odd || '—'}
-            {Number.isFinite(parseFloat(p.conf)) && (
+            {(p.is_world_cup ? getWcOdd(p) : finitePositive(p.odd) ? `@${p.odd}` : null) && (
+              <>{lang === 'en' ? 'Odds' : 'Cuota'}: {p.is_world_cup ? getWcOdd(p) : `@${p.odd}`}</>
+            )}
+            {!p.is_world_cup && finitePositive(p.conf) && (
               <> · {lang === 'en' ? 'Confidence' : 'Confianza'}: {parseFloat(p.conf)}%</>
             )}
           </div>
@@ -527,12 +532,14 @@ export default function PicksScreen() {
                 <span className="data-value" style={{ color: '#D4A935' }}>{p.conservador}</span>
               </div>
             )}
-            <div className="data-row">
-              <span className="data-label">{t.odds}</span>
-              <span className="data-value" style={{ fontFamily: 'var(--font-display)', fontSize: 22 }}>
-                @{p.odd}
-              </span>
-            </div>
+            {(p.is_world_cup ? getWcOdd(p) : finitePositive(p.odd)) && (
+              <div className="data-row">
+                <span className="data-label">{t.odds}</span>
+                <span className="data-value" style={{ fontFamily: 'var(--font-display)', fontSize: 22 }}>
+                  {p.is_world_cup ? getWcOdd(p) : `@${p.odd}`}
+                </span>
+              </div>
+            )}
             {!p.is_world_cup && (
               <div className="data-row">
                 <span className="data-label">{t.confidence}</span>
@@ -555,22 +562,15 @@ export default function PicksScreen() {
                 <span className="data-value">💰 {staking(p.conf, p.ev, t)}</span>
               </div>
             )}
-            {p.is_world_cup && (p.wc_value_commercial || p.wc_confidence_commercial) && (
-              <div className="data-row">
-                <span className="data-label">{lang === 'es' ? 'Valor comercial' : 'Commercial value'}</span>
-                <span className="data-value">{p.wc_value_commercial || p.wc_confidence_commercial}</span>
-              </div>
-            )}
-            {p.is_world_cup && p.wc_stake_suggested && (
-              <div className="data-row">
-                <span className="data-label">{lang === 'es' ? 'Stake sugerido' : 'Suggested stake'}</span>
-                <span className="data-value">{p.wc_stake_suggested}</span>
-              </div>
-            )}
+            {p.is_world_cup && <WcPickDataRows pick={p} lang={lang} />}
           </div>
 
           {/* POISSON MATRIX */}
-          <PoissonMatrix p={p} t={t} lang={lang} />
+          {p.is_world_cup ? (
+            <WcPoisson1x2 pick={p} lang={lang} />
+          ) : (
+            <PoissonMatrix p={p} t={t} lang={lang} />
+          )}
 
           {/* FORM DOTS */}
           {!p.is_world_cup && (
