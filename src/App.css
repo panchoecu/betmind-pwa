@@ -1710,34 +1710,3 @@ input  { font-family: var(--font-body); outline: none; border: none; }
 .gold  { color: var(--gold); }
 .red   { color: var(--crimson); }
 .white { color: var(--t1); }
-
-.wc-data-row-short {
-  align-items: flex-start;
-}
-.wc-data-value-short {
-  font-size: 12px !important;
-  line-height: 1.55;
-  color: var(--t2) !important;
-  font-family: var(--font-body) !important;
-}
-.wc-risk-box {
-  margin: 8px 0 0;
-  padding: 12px 14px;
-  background: rgba(212, 169, 53, 0.08);
-  border: 1px solid rgba(212, 169, 53, 0.22);
-  border-left: 3px solid var(--gold);
-  border-radius: var(--r-sm);
-}
-.wc-risk-title {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 6px;
-}
-.wc-risk-text {
-  font-size: 12px;
-  line-height: 1.55;
-  color: var(--t2);
-}

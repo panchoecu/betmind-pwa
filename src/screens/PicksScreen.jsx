@@ -6,82 +6,38 @@ import { getFlag, confColor, evLabel, staking } from '../api'
 import AppHeader from '../components/AppHeader'
 import ConfBar from '../components/ConfBar'
 import AIEdgeBadge from '../components/AIEdgeBadge'
-import WcPickDataRows from '../components/wc/WcPickDataRows'
-import WcPoisson1x2 from '../components/wc/WcPoisson1x2'
-import { getWcOdd, finitePositive } from '../components/wc/wcPickDisplay'
+
+function finitePositive(value) {
+  if (value === null || value === undefined || value === '') return null
+  const n = parseFloat(value)
+  return Number.isFinite(n) && n > 0 ? n : null
+}
 
 const TIER_COLOR = { S: '#C0142A', A: '#D4A935', B: '#4ADE80' }
 
-const WC_ANALYSIS_META_ES = 'Análisis BetMind Mundial 2026'
-const WC_ANALYSIS_META_EN = 'BetMind World Cup 2026 Analysis'
-const WC_ANALYSIS_SUBTITLE_ES = 'Lectura de mercado · Riesgos · Conclusión premium'
-const WC_ANALYSIS_SUBTITLE_EN = 'Market read · Risks · Premium conclusion'
-const WC_LOCKED_BULLETS_ES =
-  '• Lectura de mercado y contexto del partido\n• Riesgos reales del pick\n• Conclusión premium\n• Análisis narrativo completo'
-const WC_LOCKED_BULLETS_EN =
-  '• Market read and match context\n• Real risks for this pick\n• Premium conclusion\n• Full narrative analysis'
 const DAILY_LOCKED_BULLETS_ES =
   '• Forma real últimos 5 partidos\n• Historial H2H detallado\n• Lesiones y bajas confirmadas\n• Probabilidades Poisson + Dixon-Coles\n• Edge vs mercado (EV)\n• Factores tácticos y emocionales'
 const DAILY_LOCKED_BULLETS_EN =
   '• Real form — last 5 matches\n• Detailed H2H history\n• Confirmed injuries\n• Poisson + Dixon-Coles probabilities\n• Edge vs market (EV)\n• Tactical and emotional factors'
 
 function getPickDisplay(p) {
-  if (!p?.is_world_cup) return p?.pick || ''
-  return (
-    p.pick_display ||
-    p.pick_label_es ||
-    p.wc_pick_label ||
-    p.pick_commercial ||
-    p.pick ||
-    ''
-  )
-}
-
-function formatWcMatchDate(p, lang) {
-  const raw = p?.match_date || p?.date || ''
-  if (!raw) return null
-  const d = String(raw).slice(0, 10)
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return d
-  const [y, m, day] = d.split('-')
-  return lang === 'en' ? `${m}/${day}/${y}` : `${day}/${m}/${y}`
-}
-
-function getWcContextLine(p, lang) {
-  const parts = []
-  if (p?.group_id) {
-    parts.push(lang === 'en' ? `Group ${p.group_id}` : `Grupo ${p.group_id}`)
-  }
-  const date = formatWcMatchDate(p, lang)
-  if (date) parts.push(date)
-  if (p?.venue) parts.push(p.venue)
-  return parts.join(' · ')
+  return p?.pick || ''
 }
 
 function getAnalysisMeta(p, lang) {
-  if (p?.is_world_cup) {
-    return lang === 'en' ? WC_ANALYSIS_META_EN : WC_ANALYSIS_META_ES
-  }
   return `Pipeline 7 agentes IA · ${getFlag(p.league_id)} ${p.league}`
 }
 
 function getAnalysisSubtitle(p, lang) {
-  if (p?.is_world_cup) {
-    return lang === 'en' ? WC_ANALYSIS_SUBTITLE_EN : WC_ANALYSIS_SUBTITLE_ES
-  }
   return translations[lang].analysisSubtitle
 }
 
 function getLockedBullets(p, lang) {
-  if (p?.is_world_cup) {
-    return lang === 'en' ? WC_LOCKED_BULLETS_EN : WC_LOCKED_BULLETS_ES
-  }
   return lang === 'en' ? DAILY_LOCKED_BULLETS_EN : DAILY_LOCKED_BULLETS_ES
 }
 
 /* ─── POISSON MATRIX ─────────────────────────────────────── */
 function PoissonMatrix({ p, t, lang }) {
-  if (p.is_world_cup) return null
-
   const po = p.poisson || {}
   const hw  = po.p_home_win  ?? p.p_home_win  ?? null
   const dr  = po.p_draw      ?? p.p_draw      ?? null
@@ -397,7 +353,7 @@ export default function PicksScreen() {
               {isTop ? (
                 <div className="pick-card-top-badge" style={{ color: tc }}>
                   🔥 TOP · {getFlag(pick.league_id)} {pick.league}
-                  {pick.tier && !pick.is_world_cup && (
+                  {pick.tier && (
                     <span
                       className="tier-tag"
                       style={{
@@ -413,7 +369,7 @@ export default function PicksScreen() {
               ) : (
                 <div className="pick-card-league">
                   {getFlag(pick.league_id)} {pick.league}
-                  {pick.tier && !pick.is_world_cup && (
+                  {pick.tier && (
                     <span
                       className="tier-tag"
                       style={{
@@ -446,7 +402,7 @@ export default function PicksScreen() {
                 <span className="pick-arrow">›</span>
               </div>
 
-              {!pick.locked && !pick.is_world_cup && <ConfBar value={pick.conf} />}
+              {!pick.locked && <ConfBar value={pick.conf} />}
             </div>
           )
         })}
@@ -475,7 +431,7 @@ export default function PicksScreen() {
       <div className="match-header-card" style={{ borderTopColor: tierColor }}>
         <div className="match-league">
           {getFlag(p.league_id)} {p.league}
-          {p.tier && !p.is_world_cup && (
+          {p.tier && (
             <span
               className="tier-badge-lg"
               style={{
@@ -488,11 +444,6 @@ export default function PicksScreen() {
             </span>
           )}
         </div>
-        {p.is_world_cup && getWcContextLine(p, lang) && (
-          <div className="match-wc-context" style={{ fontSize: 13, color: 'var(--t3)', marginBottom: 8 }}>
-            {getWcContextLine(p, lang)}
-          </div>
-        )}
         <div className="match-teams-lg">
           <div className="match-team-lg">{p.home}</div>
           <div className="match-vs-lg">VS</div>
@@ -507,10 +458,10 @@ export default function PicksScreen() {
           <div className="locked-title">{t.lockedPick}</div>
           <div className="locked-sub">{t.lockedSub}</div>
           <div className="locked-odds">
-            {(p.is_world_cup ? getWcOdd(p) : finitePositive(p.odd) ? `@${p.odd}` : null) && (
-              <>{lang === 'en' ? 'Odds' : 'Cuota'}: {p.is_world_cup ? getWcOdd(p) : `@${p.odd}`}</>
+            {finitePositive(p.odd) && (
+              <>{lang === 'en' ? 'Odds' : 'Cuota'}: @{p.odd}</>
             )}
-            {!p.is_world_cup && finitePositive(p.conf) && (
+            {finitePositive(p.conf) && (
               <> · {lang === 'en' ? 'Confidence' : 'Confianza'}: {parseFloat(p.conf)}%</>
             )}
           </div>
@@ -526,74 +477,59 @@ export default function PicksScreen() {
               <span className="data-label">{t.mainPick}</span>
               <span className="data-value" style={{ color: '#E8203A' }}>{getPickDisplay(p)}</span>
             </div>
-            {p.conservador && !p.is_world_cup && (
+            {p.conservador && (
               <div className="data-row">
                 <span className="data-label">{t.conservativePick}</span>
                 <span className="data-value" style={{ color: '#D4A935' }}>{p.conservador}</span>
               </div>
             )}
-            {(p.is_world_cup ? getWcOdd(p) : finitePositive(p.odd)) && (
+            {finitePositive(p.odd) && (
               <div className="data-row">
                 <span className="data-label">{t.odds}</span>
                 <span className="data-value" style={{ fontFamily: 'var(--font-display)', fontSize: 22 }}>
-                  {p.is_world_cup ? getWcOdd(p) : `@${p.odd}`}
+                  @{p.odd}
                 </span>
               </div>
             )}
-            {!p.is_world_cup && (
-              <div className="data-row">
-                <span className="data-label">{t.confidence}</span>
-                <div style={{ flex: 1, marginLeft: 16 }}>
-                  <ConfBar value={p.conf} />
-                </div>
+            <div className="data-row">
+              <span className="data-label">{t.confidence}</span>
+              <div style={{ flex: 1, marginLeft: 16 }}>
+                <ConfBar value={p.conf} />
               </div>
-            )}
-            {!p.is_world_cup && (
-              <div className="data-row">
-                <span className="data-label">{t.edge}</span>
-                <span className="data-value" style={{ color: '#4ADE80' }}>
-                  {evLabel(p.ev, t)}
-                </span>
-              </div>
-            )}
-            {!p.is_world_cup && (
-              <div className="data-row">
-                <span className="data-label">{t.staking}</span>
-                <span className="data-value">💰 {staking(p.conf, p.ev, t)}</span>
-              </div>
-            )}
-            {p.is_world_cup && <WcPickDataRows pick={p} lang={lang} />}
+            </div>
+            <div className="data-row">
+              <span className="data-label">{t.edge}</span>
+              <span className="data-value" style={{ color: '#4ADE80' }}>
+                {evLabel(p.ev, t)}
+              </span>
+            </div>
+            <div className="data-row">
+              <span className="data-label">{t.staking}</span>
+              <span className="data-value">💰 {staking(p.conf, p.ev, t)}</span>
+            </div>
           </div>
 
           {/* POISSON MATRIX */}
-          {p.is_world_cup ? (
-            <WcPoisson1x2 pick={p} lang={lang} />
-          ) : (
-            <PoissonMatrix p={p} t={t} lang={lang} />
-          )}
+          <PoissonMatrix p={p} t={t} lang={lang} />
 
           {/* FORM DOTS */}
-          {!p.is_world_cup && (
-            <FormDots
-              homeTeam={p.home}
-              awayTeam={p.away}
-              analysis={p.analysis}
-              homeForm={p.home_last_5}
-              awayForm={p.away_last_5}
-              lang={lang}
-            />
-          )}
+          <FormDots
+            homeTeam={p.home}
+            awayTeam={p.away}
+            analysis={p.analysis}
+            homeForm={p.home_last_5}
+            awayForm={p.away_last_5}
+            lang={lang}
+          />
 
           {/* H2H */}
-          {!p.is_world_cup && (
-            <H2HSection
-              homeTeam={p.home}
-              awayTeam={p.away}
-              analysis={p.analysis}
-              factores={p.factores_clave}
-              lang={lang}
-            />
-          )}
+          <H2HSection
+            homeTeam={p.home}
+            awayTeam={p.away}
+            analysis={p.analysis}
+            factores={p.factores_clave}
+            lang={lang}
+          />
 
           {/* INJURIES */}
           {(p.lesiones_home?.length > 0 || p.lesiones_away?.length > 0) && (
@@ -628,8 +564,7 @@ export default function PicksScreen() {
             </div>
           )}
 
-          {/* MARKETS — Daily only; WC uses pick-specific analysis */}
-          {!p.is_world_cup && (
+          {/* MARKETS */}
           <div className="markets-row">
             <div className={`market-tag ${p.btts ? 'on' : ''}`}>
               BTTS {p.btts ? '✓' : '✗'}
@@ -638,13 +573,12 @@ export default function PicksScreen() {
               Over 2.5 {p.ou ? '✓' : '✗'}
             </div>
           </div>
-          )}
 
           {/* AI EDGE */}
-          {!p.is_world_cup && <AIEdgeBadge ev={p.ev} conf={p.conf} />}
+          <AIEdgeBadge ev={p.ev} conf={p.conf} />
 
           {/* KEY FACTORS (EN) */}
-          {lang === 'en' && !p.is_world_cup && <EnStatsView p={p} showFactors={false} />}
+          {lang === 'en' && <EnStatsView p={p} showFactors={false} />}
 
           {/* ANÁLISIS COMPLETO CTA (ES) */}
           {lang === 'es' && (

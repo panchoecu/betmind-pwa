@@ -3,8 +3,6 @@ import useStore from '../store/useStore'
 import { translations } from '../i18n/translations'
 import {
   fetchPicksResults,
-  fetchWcPicksResults,
-  fetchWcTrackRecord,
   fetchHistory,
 } from '../api'
 import AppHeader from '../components/AppHeader'
@@ -21,25 +19,6 @@ const TIER_DATA = [
   { tier: 'A', pct: 88.9,  picks: 45, color: '#D4A935' },
   { tier: 'B', pct: 95.0,  picks: 20, color: '#4ADE80' },
 ]
-
-const EMPTY_WC_STATS = {
-  mes: '—', pct: 0, yield: 0, total: 0,
-  ganados: 0, perdidos: 0, racha: 0, roi_mes: 0,
-}
-
-function mapTrackStats(data, fallback) {
-  if (!data || (!data.available && !(data.total > 0))) return fallback
-  return {
-    mes: data.mes || fallback.mes,
-    ganados: data.wins ?? fallback.ganados,
-    perdidos: (data.total ?? 0) - (data.wins ?? 0),
-    total: data.total ?? fallback.total,
-    pct: data.pct ?? fallback.pct,
-    yield: data.yield_pct ?? data.avg_roi ?? fallback.yield,
-    racha: data.streak ?? fallback.racha,
-    roi_mes: data.total ?? 0,
-  }
-}
 
 function StatsEngineCard({ label, stats, t, badge = '✅' }) {
   const s = stats
@@ -155,14 +134,11 @@ export default function StatsScreen() {
   const { stats, lang } = useStore()
   const t = translations[lang]
 
-  const [subTab,        setSubTab]        = useState('resumen')
-  const [filtro,        setFiltro]        = useState('todos')
-  const [engine,        setEngine]        = useState('daily')
-  const [pickResults,   setPickResults]   = useState([])
-  const [wcPickResults, setWcPickResults] = useState([])
-  const [wcStats,       setWcStats]       = useState(EMPTY_WC_STATS)
-  const [history,       setHistory]       = useState([])
-  const [loading,       setLoading]       = useState(true)
+  const [subTab,      setSubTab]      = useState('resumen')
+  const [filtro,      setFiltro]      = useState('todos')
+  const [pickResults, setPickResults] = useState([])
+  const [history,     setHistory]     = useState([])
+  const [loading,     setLoading]     = useState(true)
 
   const dailyStats = stats || {
     mes: 'Mayo 2026', pct: 0, yield: 0, total: 0,
@@ -173,27 +149,21 @@ export default function StatsScreen() {
     setLoading(true)
     Promise.all([
       fetchPicksResults(200),
-      fetchWcPicksResults(200),
       fetchHistory(),
-      fetchWcTrackRecord(),
-    ]).then(([results, wcResults, hist, wcTrack]) => {
+    ]).then(([results, hist]) => {
       setPickResults(Array.isArray(results) ? results : [])
-      setWcPickResults(Array.isArray(wcResults) ? wcResults : [])
       setHistory(hist)
-      setWcStats(mapTrackStats(wcTrack, EMPTY_WC_STATS))
       setLoading(false)
     })
   }, [])
 
-  const activePickResults = engine === 'wc' ? wcPickResults : pickResults
-  const filtered = activePickResults.filter(p =>
+  const filtered = pickResults.filter(p =>
     filtro === 'todos'   ? true :
     filtro === 'ganados' ? p.acertado === true :
     p.acertado === false
   )
 
   const maxPct = Math.max(...history.map(h => h.pct || 0), 1)
-  const wcEmpty = engine === 'wc' && wcPickResults.length === 0
 
   return (
     <div className="screen">
@@ -204,15 +174,6 @@ export default function StatsScreen() {
         label={t.dailyEngineVerified}
         stats={dailyStats}
         t={t}
-      />
-
-      <div style={{ height: 12 }} />
-
-      <StatsEngineCard
-        label={t.worldCupEngineVerified}
-        stats={wcStats}
-        t={t}
-        badge="🏆"
       />
 
       {/* ── SUB TABS ──────────────────────────────────────── */}
@@ -351,8 +312,8 @@ export default function StatsScreen() {
             textAlign: 'center',
           }}>
             🔒 {lang === 'es'
-              ? 'Daily Engine y World Cup Engine tienen track records separados. Resultados verificados vía API.'
-              : 'Daily Engine and World Cup Engine have separate track records. Results verified via API.'}
+              ? 'Daily Engine — track record verificado vía API.'
+              : 'Daily Engine — track record verified via API.'}
           </div>
 
           <div style={{ height: 24 }} />
@@ -362,21 +323,6 @@ export default function StatsScreen() {
       {/* ── PARTIDOS TAB ──────────────────────────────────── */}
       {subTab === 'partidos' && (
         <div className="partidos-content">
-          <div className="filtro-row" style={{ marginBottom: 8 }}>
-            <button
-              className={`filtro-btn ${engine === 'daily' ? 'active' : ''}`}
-              onClick={() => setEngine('daily')}
-            >
-              {t.engineDaily}
-            </button>
-            <button
-              className={`filtro-btn ${engine === 'wc' ? 'active' : ''}`}
-              onClick={() => setEngine('wc')}
-            >
-              {t.engineWorldCup}
-            </button>
-          </div>
-
           <div className="filtro-row">
             {['todos', 'ganados', 'perdidos'].map(f => (
               <button
@@ -399,15 +345,7 @@ export default function StatsScreen() {
             </div>
           )}
 
-          {!loading && wcEmpty && (
-            <div className="empty-card">
-              <div className="empty-icon">🏆</div>
-              <div className="empty-title">{t.wcNoResultsTitle}</div>
-              <div className="empty-sub">{t.wcNoResultsSub}</div>
-            </div>
-          )}
-
-          {!loading && !wcEmpty && filtered.length === 0 && (
+          {!loading && filtered.length === 0 && (
             <div className="empty-card">
               <div className="empty-icon">📋</div>
               <div className="empty-title">

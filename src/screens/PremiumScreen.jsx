@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import useStore from '../store/useStore'
 import { translations } from '../i18n/translations'
 import AppHeader from '../components/AppHeader'
+import { buildPremiumCheckoutUrl } from '../lib/premiumCheckout'
 
 const getPlans = (t, lang) => [
   {
@@ -19,7 +20,7 @@ const getPlans = (t, lang) => [
     name:      t.planQuarterly,
     price:     '$49',
     period:    lang === 'es' ? '/3 meses' : '/3 months',
-    variantId: '1481454',
+    variantId: '1481466',
     popular:   true,
     savings:   t.save14,
     accent:    'var(--gold)',
@@ -29,7 +30,7 @@ const getPlans = (t, lang) => [
     name:      t.planAnnual,
     price:     '$149',
     period:    lang === 'es' ? '/año' : '/year',
-    variantId: '1481455',
+    variantId: '1481468',
     popular:   false,
     savings:   t.save35,
     accent:    'var(--green)',
@@ -60,11 +61,11 @@ export default function PremiumScreen() {
     { value: stats ? `🔥 ${stats.racha}`: '—',   label: 'Racha'   },
   ]
 
-  const handleBuy = () => {
-    const base = `https://nura.lemonsqueezy.com/checkout/buy/ac29116a-8103-4236-9287-621edda68e5c`
-    const successUrl = encodeURIComponent('https://betmind-pwa.pages.dev?payment=success')
-    let url = `${base}?checkout[success_url]=${successUrl}`
-    if (chatId) url += `&checkout[custom][chat_id]=${chatId}`
+  const handleBuy = (plan) => {
+    const url = buildPremiumCheckoutUrl({
+      variantId: plan.variantId,
+      chatId,
+    })
     window.open(url, '_blank')
   }
 
@@ -159,7 +160,7 @@ export default function PremiumScreen() {
           <div
             key={plan.id}
             className={`plan-card ${plan.popular ? 'popular' : ''}`}
-            onClick={() => handleBuy()}
+            onClick={() => handleBuy(plan)}
           >
             {plan.popular && (
               <div className="plan-popular-badge">{t.mostPopular}</div>

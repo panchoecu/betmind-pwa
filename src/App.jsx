@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import useStore from './store/useStore'
 import { supabase } from './lib/supabase'
 import { fetchDailyPicks, fetchTrackRecord, fetchUser } from './api'
+import { filterDailyPicks } from './lib/dailyPicks'
 import BottomNav from './components/BottomNav'
 import HomeScreen    from './screens/HomeScreen'
 import PicksScreen   from './screens/PicksScreen'
@@ -25,8 +26,12 @@ function AppContent() {
   const loadMarketData = () => {
     fetchDailyPicks().then(data => {
       if (!data) return
-      if (data.top_picks?.length > 0) setPicks(data.top_picks)
-      if (data.picks_arriesgados) setRiskyPicks(data.picks_arriesgados)
+      const top = filterDailyPicks(data.top_picks)
+      const risky = filterDailyPicks(data.picks_arriesgados)
+      const free = filterDailyPicks(data.free_picks)
+      if (top.length > 0) setPicks(top)
+      else if (free.length > 0) setPicks(free)
+      setRiskyPicks(risky)
     })
     fetch('https://api.tuagentevirtual.info/history')
       .then(r => r.json())
@@ -155,6 +160,7 @@ function AppContent() {
           <Route path="/stats"   element={<StatsScreen />} />
           <Route path="/premium" element={<PremiumScreen />} />
           <Route path="/analyze" element={<AnalyzeScreen />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
       <BottomNav />

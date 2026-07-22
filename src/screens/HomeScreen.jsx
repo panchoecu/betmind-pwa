@@ -136,13 +136,10 @@ export default function HomeScreen() {
               <span className="top-pick-odd">@{topPick.odd}</span>
             </div>
 
-            {/* CONF BAR + AI EDGE (Daily only — WC uses commercial fields in detail) */}
-            {!topPick.is_world_cup && (
-              <div style={{ padding: '0 4px 4px' }}>
-                <ConfBar value={topPick.conf} />
-              </div>
-            )}
-            {!topPick.is_world_cup && <AIEdgeBadge ev={topPick.ev} conf={topPick.conf} />}
+            <div style={{ padding: '0 4px 4px' }}>
+              <ConfBar value={topPick.conf} />
+            </div>
+            <AIEdgeBadge ev={topPick.ev} conf={topPick.conf} />
 
             <div className="top-pick-arrow">
               {lang === 'en' ? 'View full analysis →' : 'Ver análisis completo →'}
@@ -198,19 +195,19 @@ export default function HomeScreen() {
                         </span>
                         <span className="preview-odd">@{p.odd || '—'}</span>
                         {Number.isFinite(parseFloat(p.conf)) && (
-                        <span
-                          className="preview-conf"
-                          style={{ color: confColor(p.conf) }}
-                        >
-                          {parseFloat(p.conf)}%
-                        </span>
+                          <span
+                            className="preview-conf"
+                            style={{ color: confColor(p.conf) }}
+                          >
+                            {parseFloat(p.conf)}%
+                          </span>
                         )}
                       </>
                     )}
                     <span className="preview-arrow">›</span>
                   </div>
 
-                  {!locked && !p.is_world_cup && <ConfBar value={p.conf} />}
+                  {!locked && <ConfBar value={p.conf} />}
                 </div>
               )
             })}

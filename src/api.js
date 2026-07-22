@@ -25,22 +25,7 @@ export const fetchPicksResults = async (limit = 200) => {
   } catch { return [] }
 }
 
-export const fetchWcTrackRecord = async () => {
-  try {
-    const r = await fetch(`${API_URL}/wc-track-record`)
-    if (!r.ok) return null
-    return await r.json()
-  } catch { return null }
-}
 
-export const fetchWcPicksResults = async (limit = 200) => {
-  try {
-    const r = await fetch(`${API_URL}/wc-picks-results?limit=${limit}`)
-    if (!r.ok) return []
-    const data = await r.json()
-    return Array.isArray(data) ? data : []
-  } catch { return [] }
-}
 
 export const fetchUser = async (chatId) => {
   try {
